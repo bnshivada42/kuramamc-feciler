@@ -4,18 +4,10 @@ const config = require('./config');
 class StressBot {
     constructor(botName) {
         this.botName = botName;
-        this.password = this.generatePassword();
+        // AuthMe kilitlenmesin diye şifreyi isme özel sabitliyoruz (Her restartta değişmez)
+        this.password = `Kurama_${this.botName}_123`;
         this.bot = null;
         this.loops = [];
-    }
-
-    generatePassword() {
-        const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        let pass = '';
-        for (let i = 0; i < 12; i++) {
-            pass += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return pass;
     }
 
     init() {
@@ -33,69 +25,62 @@ class StressBot {
 
     setupEvents() {
         this.bot.on('spawn', () => {
+            console.log(`[${this.botName}] Sunucuda doğdu. Kayıt yapılıyor...`);
+            
             // Sunucu giriş paketlerinin çakışmaması için asenkron gecikme
             setTimeout(() => {
+                // AuthMe tek şifreye çektiğimiz için direkt gönderiyoruz
                 this.bot.chat(`/register ${this.password}`);
-                this.startAI();
+                
+                // Kayıttan 3 saniye sonra sakin hareketleri başlat
+                setTimeout(() => {
+                    this.startSakinAI();
+                }, 3000);
             }, 3000);
         });
 
-        // Hata ve düşme durumlarında sistemi kitlemeden asenkron yeniden bağlanma
-        this.bot.on('kick', () => this.handleReconnect());
-        this.bot.on('error', () => this.handleReconnect());
+        // Hata ve düşme durumlarında sistemi kilitlemeden asenkron yeniden bağlanma
+        this.bot.on('kick', (reason) => {
+            console.log(`[${this.botName}] Sunucudan atıldı, sebep:`, reason);
+            this.handleReconnect();
+        });
+        this.bot.on('error', (err) => this.handleReconnect());
     }
 
-    startAI() {
-        if (this.bot.physics) {
-            this.bot.physics.maxGroundSpeed = 5.6;
-            this.bot.setControlState('sprint', true);
-        }
+    startSakinAI() {
+        console.log(`[${this.botName}] Sakin hareket simülasyonu başlatıldı.`);
 
-        // 1. Gelişmiş Fizik ve Jump-Sprint Döngüsü (0.5 saniyede bir)
+        // 1. Arada Bir Yürüme ve Zıplama Döngüsü (Her 4 saniyede bir kontrol eder)
         this.loops.push(setInterval(() => {
             if (!this.bot?.entity) return;
 
-            // Akıcı ve hızlı kafa rotasyon paketleri (Sunucu işlemcisini yorar)
-            const yaw = Math.random() * Math.PI * 2;
-            const pitch = (Math.random() - 0.5) * Math.PI;
-            this.bot.look(yaw, pitch, false);
-
-            // Gelişmiş Jump-Sprint Fizik Algoritması
-            const movements = ['forward', 'left', 'right', 'jump'];
-            const randomMove = movements[Math.floor(Math.random() * movements.length)];
-
+            // Önceki hareket durumlarını tamamen sıfırla
+            const movements = ['forward', 'back', 'left', 'right', 'jump'];
             movements.forEach(m => this.bot.setControlState(m, false));
-            this.bot.setControlState('sprint', true);
-            this.bot.setControlState(randomMove, true);
 
-            // Sunucuya sürekli "ArmAnimation" paketi fırlatır
-            this.bot.swingArm('mainhand');
-        }, 500));
+            // %60 ihtimalle hareket etsin, %40 ihtimalle durup izlesin
+            if (Math.random() < 0.60) {
+                const yonler = ['forward', 'left', 'right'];
+                const rastgeleYon = yonler[Math.floor(Math.random() * yonler.length)];
+                
+                // Yönü aktif et
+                this.bot.setControlState(rastgeleYon, true);
 
-        // 2. Akıllı Blok Etkileşimi (0.3 saniyede bir)
-        // Botun tam karşısındaki blokları algılayıp kazma isteği (Dig Packet) gönderir ve iptal eder
-        this.loops.push(setInterval(() => {
-            if (!this.bot?.entity) return;
-            const block = this.bot.blockAtCursor(4);
-            if (block) {
-                this.bot.dig(block, 'ignore').catch(() => {});
+                // %30 ihtimalle yürürken bir de zıplasın
+                if (Math.random() < 0.30) {
+                    this.bot.setControlState('jump', true);
+                }
+
+                // Bastığı tuşları 1.5 saniye sonra bıraksın ki kesik kesik, insansı yürüsün
+                setTimeout(() => {
+                    if (this.bot?.entity) {
+                        movements.forEach(m => this.bot.setControlState(m, false));
+                    }
+                }, 1500);
             }
-        }, 300));
+        }, 4000));
 
-        // 3. Hızlı Slot Değişimi ve Sneak Flood (0.7 saniyede bir)
-        this.loops.push(setInterval(() => {
-            if (!this.bot?.entity) return;
-            
-            // Slot değiştirme paketi gönderimi
-            const randomSlot = Math.floor(Math.random() * 9);
-            this.bot.setQuickBarSlot(randomSlot);
-
-            // Eğilip kalkma (Shift) paketi gönderimi
-            const isSneaking = this.bot.getControlState('sneak');
-            this.bot.setControlState('sneak', !isSneaking);
-        }, 700));
-
-        // 4. Kesin Zamanlı Chat Döngüsü (Tam 25 Dakikada Bir)
+        // 2. Kesin Zamanlı Chat Döngüsü (Tam 25 Dakikada Bir)
         this.loops.push(setInterval(() => {
             if (!this.bot?.entity) return;
             const randomMsg = config.SPAM_MESSAGES[Math.floor(Math.random() * config.SPAM_MESSAGES.length)];
@@ -114,7 +99,7 @@ class StressBot {
             this.bot.removeAllListeners();
             this.bot.end();
         }
-        setTimeout(() => this.init(), 5000);
+        setTimeout(() => this.init(), 32000); // Düştüğünde 7 saniye sonra temizce dönsün
     }
 }
 
