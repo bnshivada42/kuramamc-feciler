@@ -1,6 +1,6 @@
 module.exports = {
     SERVER: {
-        IP: 'oyna.kuramamc.com.tr',
+        IP: 'oy23na.k1356uram13amc.3com.tr',
         PORT: 25565
     },
     TEST: {
