@@ -23,7 +23,11 @@ function startEngine() {
         }
 
         const botName = config.BOT_NAMES[botCount];
-        const runner = new StressBot(botName);
+        // config.js içindeki PROXIES listesinden bu botun sırasına denk gelen proxy'yi alıyoruz
+        const botProxy = config.PROXIES[botCount] || null;
+
+        // botManager'a ismi, proxy adresini ve sırasını gönderiyoruz
+        const runner = new StressBot(botName, botProxy, botCount);
         runner.init();
 
         botCount++;
