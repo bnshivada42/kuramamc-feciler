@@ -8,7 +8,7 @@ module.exports = {
         CHAT_INTERVAL: 1500000 // Tam 25 dakika (ms)
     },
     // Tamamen sade, ek kelimesiz özel isim listesi
-    BOT_NAMES: ['Raffu', 'Nerfix', 'rootx', 'aslan562', 'Jeb'],
+    BOT_NAMES: ['Raffu', 'Nerfixo', 'rootx', 'aslan522', 'Jeb', 'iamdexter', 'Xaneio'],
     
     // Genişletilmiş ve optimize edilmiş mesaj havuzu
     SPAM_MESSAGES: [
