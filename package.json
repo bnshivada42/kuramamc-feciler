@@ -1,12 +1,13 @@
 {
   "name": "ultimate-mc-stress-test",
   "version": "2.0.0",
-  "description": "Minecraft sunucuları için profesyonel, yapay zeka tabanlı stress test aracı",
+  "description": "Minecraft sunucuları için Render uyumlu stress test aracı",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
-    "mineflayer": "^4.24.0"
+    "mineflayer": "^4.24.0",
+    "express": "^4.19.2"
   }
 }
