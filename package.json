@@ -9,6 +9,7 @@
   "dependencies": {
     "mineflayer": "^4.24.0",
     "express": "^4.19.2",
-    "socks-proxy-agent": "^8.0.3"
+    "socks-proxy-agent": "^8.0.3",
+    "http-proxy-agent": "^7.0.2"
   }
 }
