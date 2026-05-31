@@ -1,10 +1,10 @@
 module.exports = {
     SERVER: {
         IP: 'oyna.kuramamc.com.tr',       // Sunucu IP adresi
-        PORT: 25565           // Sunucu portu
+        PORT: 25565                       // Sunucu portu
     },
     TEST: {
-        JOIN_DELAY: 1800,     // Botlar arası giriş gecikmesi (ms)
+        JOIN_DELAY: 5000,     // Botlar arası giriş gecikmesi 5 saniyeye çıkarıldı (Sıkışma engellendi)
         CHAT_INTERVAL: 1500000 // Tam 25 dakika (ms)
     },
     // Tamamen sade, ek kelimesiz özel isim listesi
