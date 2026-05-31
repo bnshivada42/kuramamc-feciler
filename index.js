@@ -1,5 +1,13 @@
+const Express = require('express');
 const StressBot = require('./botManager');
 const config = require('./config');
+
+const app = Express();
+const PORT = process.env.PORT || 3000;
+
+app.get('/', (req, res) => {
+    res.send('⚡ Stress Test Motoru Aktif ve Uyanık!');
+});
 
 let botCount = 0;
 
@@ -10,7 +18,7 @@ function startEngine() {
     const queueInterval = setInterval(() => {
         if (botCount >= config.BOT_NAMES.length) {
             clearInterval(queueInterval);
-            console.log('📌 Botlar Suncuuy Giriş Yaptı...');
+            console.log('📌 Tüm botlar başarıyla sahaya sürüldü.');
             return;
         }
 
@@ -22,5 +30,8 @@ function startEngine() {
     }, config.TEST.JOIN_DELAY);
 }
 
-// Canavarı en gelişmiş haliyle başlat
-startEngine();
+// Render önce portu yakalasın, onay versin, HEMEN ardından botları salalım
+app.listen(PORT, () => {
+    console.log(`[🌐] Web sunucusu ${PORT} portunda başlatıldı. Render onay verdi.`);
+    startEngine(); // Motoru tam bu onay anında ateşliyoruz
+});
