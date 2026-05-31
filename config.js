@@ -10,6 +10,20 @@ module.exports = {
     // Tamamen sade, ek kelimesiz özel isim listesi
     BOT_NAMES: ['Raffu', 'Nerfixo', 'rootx', 'aslan522', 'Jeb', 'iamdexter', 'Xaneio'],
     
+    // IP Başına 3 Oyuncu Limitini Aşmak İçin Proxy Havuzu
+    // NULL olanlar Render'ın kendi IP'sini kullanır (İlk 3 bot için)
+    PROXIES: [
+        null, // Raffu -> Normal IP
+        null, // Nerfixo -> Normal IP
+        null, // rootx -> Normal IP
+        
+        'socks5://Kullanici:Sifre@ProxyIP1:Port', // aslan522 -> Proxy 1
+        'socks5://Kullanici:Sifre@ProxyIP1:Port', // Jeb -> Proxy 1
+        'socks5://Kullanici:Sifre@ProxyIP1:Port', // iamdexter -> Proxy 1
+        
+        'socks5://Kullanici:Sifre@ProxyIP2:Port'  // Xaneio -> Proxy 2 (Farklı IP)
+    ],
+
     // Genişletilmiş ve optimize edilmiş mesaj havuzu
     SPAM_MESSAGES: [
         'lag var mı sizde de?',
